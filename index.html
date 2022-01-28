@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Giphy API Test</title>
+  </head>
+  <body>
+    <div class="container">
+      <img src="#" alt="" />
+      <div class="search">
+        <button>Click Me!</button>
+        <input
+          type="search"
+          id="gif-search"
+          name="gif-search"
+          placeholder="Search for a GIF"
+        />
+      </div>
+      <p></p>
+    </div>
+    <script>
+      const img = document.querySelector("img");
+      const p = document.querySelector("p");
+      const button = document.querySelector("button");
+      const input = document.querySelector("input");
+
+      window.onload = () => {
+        getCatGIF();
+        getCatFact();
+      };
+
+      button.addEventListener("click", () => {
+        getCatGIF();
+        getCatFact();
+      });
+
+      input.addEventListener("search", () => {
+        gifSearch(input.value);
+      });
+
+      function gifSearch(gif) {
+        fetch(
+          `https://api.giphy.com/v1/gifs/search?api_key=0S9u3jHSSknnKxtv7ik5NX3bAi0SZgEx&q=${gif}`,
+          { mode: "cors" }
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            const random = Math.floor(Math.random() * response.data.length);
+            img.src = response.data[random].images.original.url;
+          })
+          .catch((error) => {
+            console.log(`Error: ${error}`);
+            img.src = "./images/no-image-available.jpg";
+          });
+      }
+
+      function getCatGIF() {
+        fetch(
+          "https://api.giphy.com/v1/gifs/translate?api_key=0S9u3jHSSknnKxtv7ik5NX3bAi0SZgEx&s=cats",
+          { mode: "cors" }
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            img.src = response.data.images.original.url;
+          })
+          .catch((error) => {
+            console.log(`Error: ${error}`);
+            img.src = "./images/no-image-available.jpg";
+          });
+      }
+
+      function getCatFact() {
+        fetch("https://cat-fact.herokuapp.com/facts", { mode: "cors" })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (response) {
+            const random = Math.floor(Math.random() * 5);
+            p.textContent = response[random].text;
+          })
+          .catch((error) => {
+            console.log(`Error: ${error}`);
+          });
+      }
+    </script>
+  </body>
+</html>
